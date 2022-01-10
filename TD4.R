@@ -149,10 +149,37 @@ library(randomForest)
 rf.model <- randomForest(as.factor(label) ~.,
                          data = digit[train,], ntree=500) #28 colonnes dans chaque arbre
 rf.predict <- predict(rf.model, digit[!train, ])
-print(cmat <- confusionMatrix(rf.predict, as.factor(digit[!train,]$label))) #0.9339  
+print(cmat <- confusionMatrix(rf.predict, as.factor(digit[!train,]$label))) # 0.9339  
 
 
 rf.model.2 <- randomForest(as.factor(label) ~.,
                          data = digit[train,], ntree=1000, mtry = 5) #5 colonnes dans chaque arbres
 rf.predict.2 <- predict(rf.model.2, digit[!train, ])
-print(cmat <- confusionMatrix(rf.predict.2, as.factor(digit[!train,]$label))) 
+print(cmat <- confusionMatrix(rf.predict.2, as.factor(digit[!train,]$label))) # 0.9237 
+
+
+## Exercice maison: Grid search pour trouver les paramètres optimaux de randomForest
+
+
+
+#### ---- Bagging
+# C'est le randomForest avec mtry = nombre de variables
+
+#### ---- XGBOOST
+library(xgboost)
+digit <- as.data.frame(lapply(digit, as.numeric))
+
+data.train <- xgb.DMatrix(data = data.matrix(digit[train, 2:ncol(digit)]),
+                          label = digit[train, ]$label)
+data.test <- xgb.DMatrix(data = data.matrix(digit[!train, 2:ncol(digit)]),
+                          label = digit[!train, ]$label)
+
+watchlist = list(train = data.train, test = data.test)
+parameters <- list(
+  # General parameters
+  booster              = "gbtree",
+  # Booster parameters
+  
+  # Task parameters
+)
+
