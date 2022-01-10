@@ -71,7 +71,14 @@ mod.lm <- multinom(as.factor(label) ~ ., data = digit[train, ], , MaxNWts =1e4)
 lm.predict <- predict(mod.lm, digit[!train, ], type = "class")
 lm.predict
 hist(as.numeric(as.character(lm.predict)), breaks = seq(-0.5, 9.5, by = 1))
+print(confusionMatrix(as.factor(lm.predict), as.factor(digit[!train,]$label))) #0.7825
+
 # 1.  Montrer la table de confusion entre valeurs observée et valeur prédite dans 
 #    la base de test digit[!train, ]
 # 2. Calculer l'accuracy du modèle
+
+
+#### ---- Elastic Net
+library(glmnet)
+
 
