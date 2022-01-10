@@ -131,3 +131,21 @@ model <- glmnet(x_train, y_train, alpha = 0.22, lambda = 0.2, family="multinomia
 elas.predict = predict(model, x_test, type="class")
 print(confusionMatrix(as.factor(elas.predict), as.factor(digit[!train,]$label))) #0.7426           
 
+#### ---- Decision tree
+library(rpart)
+tree_mod <- rpart(
+  formula = label ~ ., 
+  data = digit[train, ],
+  method = "class",  #classification
+  control = rpart.control(cp = 0)
+)
+
+tree_pred = predict(tree_mod, digit[!train, ], type="class")
+print(cmat <- confusionMatrix(tree_pred, as.factor(digit[!train,]$label))) #0.7301 
+
+
+
+
+
+
+
