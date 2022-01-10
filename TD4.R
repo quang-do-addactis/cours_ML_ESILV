@@ -225,5 +225,21 @@ print(mcat <- confusionMatrix(as.factor(h2o.predictions$predict),
                               as.factor(digit[!train,]$label))) #0.738  
 
 # trouver une meilleure architecture du réseaux
+# changer hidden, rate, epochs
+
+h2o.model.2 <- h2o.deeplearning(x = setdiff(names(digit), "label"),
+                                y = "label",
+                                training_frame = h2o.train,
+                                standardize = TRUE,
+                                hidden = c(400, 200, 100),
+                                rate = 0.05,
+                                epochs = 10,
+                                seed = 1234
+)
+
+h2o.predictions.2 = as.data.frame(h2o.predict(h2o.model.2, h2o.test))
+print(mcat <- confusionMatrix(as.factor(h2o.predictions.2$predict),  
+                              as.factor(digit[!train,]$label))) #0.9271            
 
 
+# CNN: Convolutional Neural Network: filters lecture
