@@ -16,8 +16,6 @@ digit[, .N / nrow(digit) * 100, label][order(label)]
 hist(digit$label, breaks = seq(-0.5, 9.5, by = 1))
 
 
-
-
 #Visualization 
 plotdigit<- function(datarow){
   # function will produce an image of the data given
@@ -56,3 +54,15 @@ rows = sample(1:nrow(datum), size = 12)
 for (i in rows){
   plotdigit(datum[i, ])
 }
+
+#### ---- train test 
+set.seed(1)
+train_index = sample(seq(10), nrow(digit), replace = T)
+length(train_index)
+
+train = train_index <= 8
+table(train)
+
+
+
+
