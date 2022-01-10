@@ -120,5 +120,14 @@ for (alpha in alphas){
 result = data.frame(alpha = alpha_cv,
                     lambda = lambda_cv,
                     acc = acc)
+setDT(result)[order(result$acc)]
 
+# 1. Fitter un modèle glmnet avec le paramètre alpha = 0.2222222, lambda = 0.2
+# 2. Prédire sur la base test en utilisant le modèle déveppé dans l'étape 1
+# 3. Créer la matrix de confusion
+
+
+model <- glmnet(x_train, y_train, alpha = 0.22, lambda = 0.2, family="multinomial")
+elas.predict = predict(model, x_test, type="class")
+print(confusionMatrix(as.factor(elas.predict), as.factor(digit[!train,]$label))) #0.7426           
 
