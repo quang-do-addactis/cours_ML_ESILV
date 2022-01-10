@@ -179,7 +179,51 @@ parameters <- list(
   # General parameters
   booster              = "gbtree",
   # Booster parameters
-  
+  eta                  = 0.1,
+  gamma                = 0,
+  max_depth            = 4,
+  min_child_weight     = 1,
+  subsample            = 0.8,
+  colsample_by_tree    = 0.8,
+  lambda               = 1,
+  alpha                = 0,
   # Task parameters
+  objective            = "multi:softmax", #classification multiclass
+  eval_metric          = "merror",
+  num_class            = 10
 )
+
+set.seed(1)
+xgb.model = xgb.train(parameters, data.train, nrounds = 500, early_stopping_rounds = 50, watchlist)
+
+xgb.predict = predict(xgb.model, data.test)
+print(mcat <- confusionMatrix(as.factor(xgb.predict),
+                              as.factor(digit[!train,]$label))) #0.926         
+
+# exercice maison: Hyper-parameters tuning
+
+#### ---- Neural Network
+library(h2o)
+h2o.init()
+digit$label = as.factor(digit$label)
+h2o.train <- as.h2o(digit[train, ])
+h2o.test <- as.h2o(digit[!train, ])
+
+h2o.model <- h2o.deeplearning(x = setdiff(names(digit), "label"),
+                              y = "label",
+                              training_frame = h2o.train,
+                              standardize = TRUE,
+                              hidden = c(6),
+                              rate = 0.05,
+                              epochs = 10,
+                              seed = 1234
+)
+
+
+h2o.predictions = as.data.frame(h2o.predict(h2o.model, h2o.test))
+print(mcat <- confusionMatrix(as.factor(h2o.predictions$predict),  
+                              as.factor(digit[!train,]$label))) #0.738  
+
+# trouver une meilleure architecture du réseaux
+
 
