@@ -80,5 +80,45 @@ print(confusionMatrix(as.factor(lm.predict), as.factor(digit[!train,]$label))) #
 
 #### ---- Elastic Net
 library(glmnet)
+x_train <- model.matrix(label ~ ., digit[train, ])[, -1]
+x_test <-  model.matrix(label ~ ., digit[!train, ])[, -1]
+y_train <- as.character(digit[train, ]$label)
+
+?glmnet
+
+alphas = seq(0, 1, length = 10)
+lambdas = c(0.1, 0.2, 0.5)
+cv_index = sample(seq(5), nrow(x_train), replace = T)
+
+acc = c()
+alpha_cv = c()
+lambda_cv = c()
+for (alpha in alphas){
+  for (lambda in lambdas){
+    alpha_cv = c(alpha_cv, alpha)
+    lambda_cv = c(lambda_cv, lambda)
+    acc_cv = c()
+    for (k in 1:5){
+      x_train_cv = x_train[cv_index != k, ]
+      y_train_cv = y_train[cv_index != k]
+      
+      x_test_cv = x_train[cv_index == k, ]
+      y_test_cv = y_train[cv_index == k]
+      
+      model <- glmnet(x_train_cv, y_train_cv,
+                      alpha = alpha, lambda = lambda, family="multinomial")
+      
+      #prediction
+      pred = predict(model, x_test_cv, type="class")
+      mcat = table(pred, y_test_cv)
+      acc_cv = c(acc, sum(diag(mcat)) / sum(mcat)) #accuracy for 1 fold
+    }
+    acc = c(acc, mean(acc_cv))
+  }
+}
+
+result = data.frame(alpha = alpha_cv,
+                    lambda = lambda_cv,
+                    acc = acc)
 
 
