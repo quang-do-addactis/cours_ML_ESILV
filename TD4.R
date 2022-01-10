@@ -144,8 +144,15 @@ tree_pred = predict(tree_mod, digit[!train, ], type="class")
 print(cmat <- confusionMatrix(tree_pred, as.factor(digit[!train,]$label))) #0.7301 
 
 
+#### ---- randomForest
+library(randomForest)
+rf.model <- randomForest(as.factor(label) ~.,
+                         data = digit[train,], ntree=500) #28 colonnes dans chaque arbre
+rf.predict <- predict(rf.model, digit[!train, ])
+print(cmat <- confusionMatrix(rf.predict, as.factor(digit[!train,]$label))) #0.9339  
 
 
-
-
-
+rf.model.2 <- randomForest(as.factor(label) ~.,
+                         data = digit[train,], ntree=1000, mtry = 5) #5 colonnes dans chaque arbres
+rf.predict.2 <- predict(rf.model.2, digit[!train, ])
+print(cmat <- confusionMatrix(rf.predict.2, as.factor(digit[!train,]$label))) 
